@@ -1,0 +1,212 @@
+#!/bin/sh
+WORKPATH="./"
+PATH_POS=-1
+FILELIST=""
+UPDATE=""
+INC=""
+COUNT=0
+# PROJECT_DIR="./my-project-tags"
+
+for PARAM in "$@"
+do
+    if [ "$PARAM" = "list" ]
+    then
+        FILELIST=$PARAM
+    fi
+
+    if [ "$PARAM" = "path" ]
+    then
+        #echo $COUNT
+        PATH_POS=$COUNT
+        PATH_POS+=1
+    fi
+
+    if [ $COUNT = $PATH_POS ]
+    then
+        WORKPATH=$PARAM
+    fi
+
+    if [ "$PARAM" = "update" ]
+    then
+        UPDATE=$PARAM
+    fi
+
+    if [ "$PARAM" = "inc" ]
+    then
+        INC=$PARAM
+    fi
+
+    COUNT+=1
+done
+
+echo $WORKPATH
+cd $WORKPATH
+
+# if [ ! -d $PROJECT_DIR ]; then
+    # mkdir $PROJECT_DIR
+# fi
+
+if [ "$FILELIST" = "list" ]
+then
+    #-path "$WORKPATH/arch/arm/include*" -prune -o \
+    # generate cscope.file
+    echo "gen cscope.file..."
+    find -L $WORKPATH \
+    -path "$WORKPATH/nand_spl*" -prune -o \
+    -path "$WORKPATH/onenand_ipl*" -prune -o \
+    -path "$WORKPATH/post*" -prune -o \
+    -path "$WORKPATH/.pc*" -prune -o \
+    \
+    -path "$WORKPATH/arch/*" ! -path "$WORKPATH/arch/arm*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/*" ! -path "$WORKPATH/arch/arm/cpu/arm_cortexa8*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/arm_cortexa8/imx51*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/arm_cortexa8/omap3*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/arm_cortexa8/s5pc1xx*" -prune -o \
+    \
+     -path "$WORKPATH/include/asm/arch-*" -prune -o \
+     -path "$WORKPATH/include/mpc*" -prune -o \
+     -path "$WORKPATH/include/ppc*" -prune -o \
+     -path "$WORKPATH/include/ns9*" -prune -o \
+     -path "$WORKPATH/include/configs/*" ! -path "$WORKPATH/include/configs/ti8168*" -prune -o \
+    \
+     -path "$WORKPATH/board/*" ! -path "$WORKPATH/board/ti*" -prune -o \
+     -path "$WORKPATH/board/ti/*" ! -path "$WORKPATH/board/ti/ti8168*" -prune -o \
+    \
+     -path "$WORKPATH/drivers/*" ! -path "$WORKPATH/drivers/net*" \
+     ! -path "$WORKPATH/drivers/mtd*" \
+     ! -path "$WORKPATH/drivers/serial*" \
+     ! -path "$WORKPATH/drivers/mmc*" \
+     ! -path "$WORKPATH/drivers/rtc*" \
+     ! -path "$WORKPATH/drivers/pcmcia*" \
+     ! -path "$WORKPATH/drivers/spi*" \
+     ! -path "$WORKPATH/drivers/i2c*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/net/*" ! -path "$WORKPATH/drivers/net/phy*" \
+     ! -path "$WORKPATH/drivers/net/davinci_emac*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/mtd/onenand*" -prune -o \
+     -path "$WORKPATH/drivers/mtd/nand/*" ! -path "$WORKPATH/drivers/mtd/nand/nand*" \
+     ! -path "$WORKPATH/drivers/mtd/nand/ti81xx_nand*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/serial/*" \
+     ! -path "$WORKPATH/drivers/serial/serial.*" \
+     ! -path "$WORKPATH/drivers/serial/ns16550*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/mmc/*" \
+     ! -path "$WORKPATH/drivers/mmc/omap3_mmc*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/rtc/*" \
+     ! -path "$WORKPATH/drivers/rtc/date*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/pcmcia/*" \
+     ! -path "$WORKPATH/drivers/pcmcia/tqm8xx_pcmcia*" \
+     ! -path "$WORKPATH/drivers/pcmcia/rpx_pcmcia*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/spi/*" \
+     ! -path "$WORKPATH/drivers/spi/omap3_spi*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/i2c/*" \
+     ! -path "$WORKPATH/drivers/i2c/omap24xx_i2c*" \
+     -prune -o \
+     \
+    -name "*.mod.c" -prune -o \
+        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -print > cscope.file
+
+    #awk '{print "\014\012" $0 ",0" }' cscope.files > TAGS
+    # generate vimprojects for indexer
+    #echo "tags=$PWD CD=. filter="*.c *.h" {" > vimprojects
+    #cat cscope.files >> vimprojects
+    #echo "}" >> vimprojects
+
+    # generate tag file for lookupfile plugin
+    echo "gen lookupfile..."
+    echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > filenametags
+    find -L $WORKPATH \
+    -path "$WORKPATH/nand_spl*" -prune -o \
+    -path "$WORKPATH/onenand_ipl*" -prune -o \
+    -path "$WORKPATH/post*" -prune -o \
+    \
+    -path "$WORKPATH/arch/*" ! -path "$WORKPATH/arch/arm*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/*" ! -path "$WORKPATH/arch/arm/cpu/arm_cortexa8*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/arm_cortexa8/imx51*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/arm_cortexa8/omap3*" -prune -o \
+    -path "$WORKPATH/arch/arm/cpu/arm_cortexa8/s5pc1xx*" -prune -o \
+    \
+     -path "$WORKPATH/include/asm/arch-*" -prune -o \
+     -path "$WORKPATH/include/mpc*" -prune -o \
+     -path "$WORKPATH/include/ppc*" -prune -o \
+     -path "$WORKPATH/include/ns9*" -prune -o \
+     -path "$WORKPATH/include/configs/*" ! -path "$WORKPATH/include/configs/ti8168*" -prune -o \
+    \
+     -path "$WORKPATH/board/*" ! -path "$WORKPATH/board/ti*" -prune -o \
+     -path "$WORKPATH/board/ti/*" ! -path "$WORKPATH/board/ti/ti8168*" -prune -o \
+    \
+     -path "$WORKPATH/drivers/*" ! -path "$WORKPATH/drivers/net*" \
+     ! -path "$WORKPATH/drivers/mtd*" \
+     ! -path "$WORKPATH/drivers/serial*" \
+     ! -path "$WORKPATH/drivers/mmc*" \
+     ! -path "$WORKPATH/drivers/rtc*" \
+     ! -path "$WORKPATH/drivers/pcmcia*" \
+     ! -path "$WORKPATH/drivers/spi*" \
+     ! -path "$WORKPATH/drivers/i2c*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/net/*" ! -path "$WORKPATH/drivers/net/phy*" \
+     ! -path "$WORKPATH/drivers/net/davinci_emac*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/mtd/onenand*" -prune -o \
+     -path "$WORKPATH/drivers/mtd/nand/*" ! -path "$WORKPATH/drivers/mtd/nand/nand*" \
+     ! -path "$WORKPATH/drivers/mtd/nand/ti81xx_nand*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/serial/*" \
+     ! -path "$WORKPATH/drivers/serial/serial.*" \
+     ! -path "$WORKPATH/drivers/serial/ns16550*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/mmc/*" \
+     ! -path "$WORKPATH/drivers/mmc/omap3_mmc*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/rtc/*" \
+     ! -path "$WORKPATH/drivers/rtc/date*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/pcmcia/*" \
+     ! -path "$WORKPATH/drivers/pcmcia/tqm8xx_pcmcia*" \
+     ! -path "$WORKPATH/drivers/pcmcia/rpx_pcmcia*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/spi/*" \
+     ! -path "$WORKPATH/drivers/spi/omap3_spi*" \
+     -prune -o \
+     \
+     -path "$WORKPATH/drivers/i2c/*" \
+     ! -path "$WORKPATH/drivers/i2c/omap24xx_i2c*" \
+     -prune -o \
+     \
+        -name "*.[chxsSCH]" -type f -printf "%f\t%p\t1\n" | \
+        sort -f >> filenametags
+fi
+
+if [ "$UPDATE" = "update" ]
+then
+    #echo "gen ctags..."
+    # ctags --c++-kinds=+p --fields=+iaSn --extra=+q -L $PROJECT_DIR/cscope.files -f $PROJECT_DIR/tags
+    # ctags -L cscope.files -f tags
+
+    echo "gen cscope..."
+    # cscope -bqk -i cscope.files
+
+    gtags --gtagsconf ~/gtags.conf -f cscope.files -i
+fi
+

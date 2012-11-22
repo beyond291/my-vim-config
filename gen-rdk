@@ -1,0 +1,86 @@
+#!/bin/sh
+WORKPATH="./"
+PATH_POS=-1
+FILELIST=""
+UPDATE=""
+INC=""
+COUNT=0
+# PROJECT_DIR="./my-project-tags"
+
+for PARAM in "$@"
+do
+    if [ "$PARAM" = "list" ]
+    then
+        FILELIST=$PARAM
+    fi
+
+    if [ "$PARAM" = "path" ]
+    then
+        #echo $COUNT
+        PATH_POS=$COUNT
+        PATH_POS+=1
+    fi
+
+    if [ $COUNT = $PATH_POS ]
+    then
+        WORKPATH=$PARAM
+    fi
+
+    if [ "$PARAM" = "update" ]
+    then
+        UPDATE=$PARAM
+    fi
+
+    if [ "$PARAM" = "inc" ]
+    then
+        INC=$PARAM
+    fi
+
+    COUNT+=1
+done
+
+echo $WORKPATH
+cd $WORKPATH
+
+# if [ ! -d $PROJECT_DIR ]; then
+    # mkdir $PROJECT_DIR
+# fi
+
+if [ "$FILELIST" = "list" ]
+then
+    # generate cscope.file
+    echo "gen cscope.file..."
+    find . \
+        -path "./build*" -prune -o \
+        -path "./bin*" -prune -o \
+        -name "*.mod.c" -prune -o \
+        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -print > cscope.files
+
+    awk '{print "\014\012" $0 ",0" }' cscope.files > TAGS
+
+    # generate tag file for lookupfile plugin
+    echo "gen lookupfile..."
+    echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > filenametags
+    find . \
+        -path "./build*" -prune -o \
+        -path "./bin*" -prune -o \
+        -name "*.mod.c" -prune -o \
+        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -type f -printf "%f\t%p\t1\n" | \
+        sort -f >> filenametags
+
+    #echo "tags=$PWD CD=. filter="*.c *.h" {" > vimprojects
+    #cat cscope.files >> vimprojects
+    #echo "}" >> vimprojects
+fi
+
+if [ "$UPDATE" = "update" ]
+then
+    #echo "gen ctags..."
+    # ctags --c++-kinds=+p --fields=+iaSn --extra=+q -L $PROJECT_DIR/cscope.files -f $PROJECT_DIR/tags
+    ctags -L cscope.files -f tags
+
+    # echo "gen cscope..."
+    # cscope -bqk -i cscope.files
+    gtags --gtagsconf ~/gtags.conf -f cscope.files -i
+fi
+
