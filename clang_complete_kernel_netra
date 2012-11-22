@@ -1,0 +1,18 @@
+-D__KERNEL__
+-D__LINUX_ARM_ARCH__=7
+-nostdinc
+-I/opt/arm-2009q1/lib/gcc/arm-none-linux-gnueabi/4.3.3/include
+-I./arch/arm/include
+-I./include
+-I./arch/arm/mach-omap2/include
+-I./arch/arm/plat-omap/include
+-I./arch/arm/mach-davinci/include
+-DMODULE
+-DKBUILD_STR(s)=#s
+-DKBUILD_BASENAME=KBUILD_STR(main)
+-DKBUILD_MODNAME=KBUILD_STR(main)
+-include ./include/generated/autoconf.h
+-march=armv7-a
+-mfloat-abi=soft
+-ccc-host-triple arm-elf
+-integrated-as
