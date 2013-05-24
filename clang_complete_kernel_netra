@@ -1,18 +1,12 @@
 -D__KERNEL__
+-Iarch/arm/mach-omap2/include
+-Iarch/arm/plat-omap/include
 -D__LINUX_ARM_ARCH__=7
--nostdinc
--I/opt/arm-2009q1/lib/gcc/arm-none-linux-gnueabi/4.3.3/include
--I./arch/arm/include
--I./include
--I./arch/arm/mach-omap2/include
--I./arch/arm/plat-omap/include
--I./arch/arm/mach-davinci/include
+-mfpu=softvfp+vfp
+-I/home/xuyufeng/mcv3000/20130516/ti_tools/linux-04.04.00.01/arch/arm/include
+-Iinclude
 -DMODULE
+-DDEBUG
+-D__GENKSYMS__
 -DKBUILD_STR(s)=#s
--DKBUILD_BASENAME=KBUILD_STR(main)
--DKBUILD_MODNAME=KBUILD_STR(main)
--include ./include/generated/autoconf.h
--march=armv7-a
--mfloat-abi=soft
--ccc-host-triple arm-elf
--integrated-as
+-include include/generated/autoconf.h
