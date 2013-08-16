@@ -36,7 +36,7 @@ do
         INC=$PARAM
     fi
 
-    COUNT+=1
+    COUNT=$COUNT+1
 done
 
 echo $WORKPATH
@@ -129,6 +129,7 @@ then
         ! -path "$WORKPATH/drivers/watchdog*" \
         ! -path "$WORKPATH/drivers/misc*"  \
         ! -path "$WORKPATH/drivers/pci*"  \
+        ! -path "$WORKPATH/drivers/media*"  \
         ! -path "$WORKPATH/drivers/video*"  \
         ! -path "$WORKPATH/drivers/mmc*"  \
         ! -path "$WORKPATH/drivers/base*"  \
@@ -260,6 +261,7 @@ then
         ! -path "$WORKPATH/drivers/watchdog*" \
         ! -path "$WORKPATH/drivers/misc*"  \
         ! -path "$WORKPATH/drivers/pci*"  \
+        ! -path "$WORKPATH/drivers/media*"  \
         ! -path "$WORKPATH/drivers/video*"  \
         ! -path "$WORKPATH/drivers/mmc*"  \
         ! -path "$WORKPATH/drivers/base*"  \
@@ -304,7 +306,7 @@ fi
 if [ "$UPDATE" = "update" ]
 then
     #echo "gen ctags..."
-    #ctags --c++-kinds=+p --fields=+iaSn --extra=+q -L cscope.files
+    ctags --c++-kinds=+p --fields=+iaS --extra=+q -L cscope.files
 
     echo "gen gtags"
     # gtags --gtagsconf ~/gtags.conf -f cscope.files

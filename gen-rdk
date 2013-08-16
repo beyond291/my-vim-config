@@ -36,7 +36,7 @@ do
         INC=$PARAM
     fi
 
-    COUNT+=1
+    COUNT=$COUNT+1
 done
 
 echo $WORKPATH
@@ -76,10 +76,10 @@ fi
 if [ "$UPDATE" = "update" ]
 then
     #echo "gen ctags..."
-    # ctags --c++-kinds=+p --fields=+iaSn --extra=+q -L $PROJECT_DIR/cscope.files -f $PROJECT_DIR/tags
-    ctags -L cscope.files -f tags
+    # ctags --c++-kinds=+p --fields=+iaS --extra=+q -L cscope.files -f tags
+    # ctags -L cscope.files -f tags
 
-    # echo "gen cscope..."
+    echo "gen cscope..."
     # cscope -bqk -i cscope.files
     gtags --gtagsconf ~/gtags.conf -f cscope.files -i
 fi

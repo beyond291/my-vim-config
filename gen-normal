@@ -36,7 +36,7 @@ do
         INC=$PARAM
     fi
 
-    COUNT+=1
+    COUNT=$COUNT+1
 done
 
 echo $WORKPATH
@@ -52,16 +52,16 @@ then
     echo "gen cscope.file..."
     find . \
         -name "*.mod.c" -prune -o \
-        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -print > cscope.files
+        \( -name '*.[chxsSCH]' -o -name '*.cpp' -o -name '*.inc' -o -name '*.INC' -o -name '*.cpp' \) -print > cscope.files
 
-    awk '{print "\014\012" $0 ",0" }' cscope.files > TAGS
+    # awk '{print "\014\012" $0 ",0" }' cscope.files > TAGS
 
     # generate tag file for lookupfile plugin
     echo "gen lookupfile..."
     echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > filenametags
     find . \
         -name "*.mod.c" -prune -o \
-        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -type f -printf "%f\t%p\t1\n" | \
+        \( -name '*.[chxsSCH]' -o -name '*.cpp' -o -name '*.inc' -o -name '*.INC' -o -name '*.cpp' \) -type f -printf "%f\t%p\t1\n" | \
         sort -f >> filenametags
 
     #echo "tags=$PWD CD=. filter="*.c *.h" {" > vimprojects
@@ -72,7 +72,7 @@ fi
 if [ "$UPDATE" = "update" ]
 then
     #echo "gen ctags..."
-    # ctags --c++-kinds=+p --fields=+iaSn --extra=+q -L $PROJECT_DIR/cscope.files -f $PROJECT_DIR/tags
+    ctags --c++-kinds=+p --fields=+iaSn --extra=+q -L cscope.files -f tags
     # ctags -L cscope.files -f tags
 
     echo "gen cscope..."

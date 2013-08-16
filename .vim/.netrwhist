@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/home/xuyufeng/mcv3000/svn/code/trunk2_rdk4d0/vcr_rdk/platform/videoport'
+let g:netrw_dirhist_2='/home/xuyufeng/mcv3000/svn/code/trunk/vcr_rdk/makerules'
+let g:netrw_dirhist_3='/home/xuyufeng/mcv3000/svn/code/trunk2_rdk4d0/vcr_rdk/userintf'
+let g:netrw_dirhist_4='/home/xuyufeng/mcv3000/20130618/target/app_816x/dvr_rdk/ti816x'
+let g:netrw_dirhist_5='/home/xuyufeng/qt-4.8.4-SGX-ifc/mkspecs'
+let g:netrw_dirhist_6='/home/xuyufeng/mcv3000/20130702/ti_tools/linux-dvr-rdk/arch/arm'

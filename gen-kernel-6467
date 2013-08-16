@@ -1,0 +1,95 @@
+#!/bin/sh
+WORKPATH="."
+PATH_POS=-1
+FILELIST=""
+UPDATE=""
+INC=""
+COUNT=0
+# PROJECT_DIR="./my-project-tags"
+
+for PARAM in "$@"
+do
+    if [ "$PARAM" = "list" ]
+    then
+        FILELIST=$PARAM
+    fi
+
+    if [ "$PARAM" = "path" ]
+    then
+        #echo $COUNT
+        PATH_POS=$COUNT
+        PATH_POS+=1
+    fi
+
+    if [ $COUNT = $PATH_POS ]
+    then
+        WORKPATH=$PARAM
+    fi
+
+    if [ "$PARAM" = "update" ]
+    then
+        UPDATE=$PARAM
+    fi
+
+    if [ "$PARAM" = "inc" ]
+    then
+        INC=$PARAM
+    fi
+
+    COUNT=$COUNT+1
+done
+
+echo $WORKPATH
+#cd $WORKPATH
+
+# if [ ! -d $PROJECT_DIR ]; then
+    # mkdir $PROJECT_DIR
+# fi
+
+TMP_FILES=/tmp/tmp_files
+TMP_CSCOPE=/tmp/cscope.files
+TMP_FILENAMETAGS=/tmp/tmp_filenametags
+FILENAMETAGS=/tmp/filenametags
+
+if [ "$FILELIST" = "list" ]
+then
+    # generate cscope.file
+    echo "gen cscope.file..."
+    find -L $WORKPATH \
+        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -print | sort -f > $TMP_FILES
+
+    filefilter-linux-6467.awk $TMP_FILES > $TMP_CSCOPE
+    mv $TMP_CSCOPE ./cscope.files
+
+
+    # awk '{print "." $0 }' $PROJECT_DIR/cscope.file > $PROJECT_DIR/cscope.files 
+    # rm $PROJECT_DIR/cscope.file
+
+    #awk '{print "\014\012" $0 ",0" }' cscope.files > TAGS
+
+    # generate vimprojects for indexer
+    #echo "tags=$PWD CD=. filter="*.c *.h" {" > vimprojects
+    #cat cscope.files >> vimprojects
+    #echo "}" >> vimprojects
+
+    # generate tag file for lookupfile plugin
+    echo "gen lookupfile..."
+    echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > $TMP_FILENAMETAGS 
+    find -L $WORKPATH \
+        -name "*.[chxsSCH]" -type f -printf "%f\t%p\t1\n" | \
+        sort -f >> $TMP_FILENAMETAGS 
+    filefilter-linux-6467.awk $TMP_FILENAMETAGS > $FILENAMETAGS
+    mv $FILENAMETAGS ./filenametags
+fi
+
+if [ "$UPDATE" = "update" ]
+then
+    echo "gen ctags..."
+    ctags --c++-kinds=+p --fields=+iaS --extra=+q -L cscope.files
+
+    echo "gen gtags"
+    # gtags --gtagsconf ~/gtags.conf -f cscope.files
+    # cscope -bqk -i cscope.files
+    gtags --gtagsconf ~/gtags.conf -f cscope.files -i
+fi
+

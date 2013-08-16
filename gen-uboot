@@ -118,7 +118,7 @@ then
      -prune -o \
      \
     -name "*.mod.c" -prune -o \
-        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -print > cscope.file
+        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -print > cscope.files
 
     #awk '{print "\014\012" $0 ",0" }' cscope.files > TAGS
     # generate vimprojects for indexer

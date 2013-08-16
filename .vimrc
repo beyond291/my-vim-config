@@ -3,11 +3,16 @@ let s:ProjectDir="."
 
 " disable some plugin
 let g:pathogen_disabled = []
-"call add(g:pathogen_disabled, 'clang_complete')
-"call add(g:pathogen_disabled, 'neocomplcache-clang_complete')
+" call add(g:pathogen_disabled, 'clang_complete')
+" call add(g:pathogen_disabled, 'neocomplcache-clang_complete')
 " call add(g:pathogen_disabled, 'snipMate_HW')
 call add(g:pathogen_disabled, 'echofunc')
 call add(g:pathogen_disabled, 'OmniCppComplete') "must be the last one
+
+if filereadable(s:ProjectDir."/tags")
+    call add(g:pathogen_disabled, 'clang_complete')
+    call add(g:pathogen_disabled, 'neocomplcache-clang_complete')
+endif
 
 if filereadable(s:ProjectDir."/project-setting.vim") "工程配置文件的名字
     exec "source ".s:ProjectDir."/project-setting.vim"
@@ -35,14 +40,17 @@ if has("gui_running")
     let &termencoding=&encoding
 
     " 解决菜单乱码
-    set langmenu=zh_CN.utf-8
-    source $VIMRUNTIME/delmenu.vim
-    source $VIMRUNTIME/menu.vim
+    " set langmenu=zh_CN.utf-8
+    " source $VIMRUNTIME/delmenu.vim
+    " source $VIMRUNTIME/menu.vim
 
     " 解决consle输出乱码
     language messages en_US.utf-8
+    set background=dark
+    " colorscheme oceandeep
+    colorscheme desertEx
     " colorscheme wombat
-    colorscheme darkZ
+    " colorscheme solarized
 else
 
     if has("win32")
@@ -61,19 +69,21 @@ else
     endif
 
     set t_Co=256
+    set background=dark
     colorscheme wombat256
+    " colorscheme solarized
     map <ESC>[32~ <S-F8> "let <S-F8> work for me
 endif
 
 "let &termencoding=&encoding
-if has("win32")
-"set gfn=YaHei\ Consolas\ Hybrid:h10
-else
-    "set gfn=YaHei\ Consolas\ Hybrid\ 11
+if has("gui_running")
+   " set gfn=Monaco\ 11
+   " set gfn=YaHei\ Consolas\ Hybrid\ 11
     "set gfn=YaheiMono\ 10
-   "set gfn=Liberation\ Mono\ 11
-   "set gfn=Bitstream\ Vera\ Sans\ Mono\ 10
-   set gfn=WenQuanYi\ Micro\ Hei\ Mono\ 10
+   " set gfn=Liberation\ Mono\ 11
+   " set gfn=Ubuntu\ Mono\ 12
+   set gfn=Bitstream\ Vera\ Sans\ Mono\ 11
+   " set gfn=WenQuanYi\ Micro\ Hei\ Mono\ 10
 endif
 
 " allow backspacing over everything in insert mode
@@ -109,6 +119,8 @@ filetype plugin indent on
 "custom file type
 au BufNewFile,BufRead *.inc set filetype=C
 au BufNewFile,BufRead *.INC set filetype=C
+au BufNewFile,BufRead *.MK  set filetype=make
+au BufNewFile,BufRead *.mk  set filetype=make
 
 "remove spaces
 nmap <f12> :%s= *$==<cr>
@@ -197,7 +209,6 @@ nmap <leader>fu :se ff=unix<cr>
 
 " Hide the mouse when typing text
 set mousehide
-
 set hidden
 
 nmap <C-H> <C-W>h 
@@ -416,6 +427,7 @@ else
     nmap <leader>ff :FufQuickfix<cr>
     nmap <leader>jj :FufJumpList<cr>
     nmap <leader>bb :FufBuffer<cr>
+    " nmap <F6> :FufBuffer<cr>
     nmap <F5> :FufTaggedFile<cr>
 endif
 
@@ -456,8 +468,8 @@ if has("win32")
     let Grep_Shell_Quote_Char = "'" 
     "let Grep_Shell_Escape_Char = '"' 
 endif
-let Grep_Skip_Dirs = 'RCS CVS SCCS .svn .project lib obj'
-let Grep_Skip_Files = '*.bak *.o *.a *.obj *.out *.oe674 *.pch *.sem3 *.oem3 *.map'
+let Grep_Skip_Dirs = 'RCS CVS SCCS .svn .project lib obj linux_lsp linux_devkit'
+let Grep_Skip_Files = '*.bak *.o *.a *.obj *.out *.oe674 *.pch *.sem3 *.oem3 *.map *.apk'
 
 function! SaveSession()
     exec "set sessionoptions-=curdir"
@@ -509,7 +521,7 @@ nmap <leader>yw "+yw
 nmap <leader>p "+p
 
 "yankring
-"nnoremap <silent> <leader>ys :YRShow<CR>
+nnoremap <silent> <leader>ys :YRShow<CR>
 "
 function! UpdateDateTags()
 
@@ -584,75 +596,76 @@ let showmarks_hlline_lower = 1
 let showmarks_hlline_upper = 1
 
 
-let g:LookupFile_DisableDefaultMap = 1
+" let g:LookupFile_DisableDefaultMap = 1
 
 
-"""NeoComplete
-""" Disable AutoComplPop.
+" Disable AutoComplPop.
 let g:acp_enableAtStartup = 0
 " Use neocomplcache.
 let g:neocomplcache_enable_at_startup = 1
 " Use smartcase.
 let g:neocomplcache_enable_smart_case = 1
-" Use camel case completion.
-let g:neocomplcache_enable_camel_case_completion = 1
-" Use underbar completion.
-let g:neocomplcache_enable_underbar_completion = 1
 " Set minimum syntax keyword length.
 let g:neocomplcache_min_syntax_length = 3
 let g:neocomplcache_lock_buffer_name_pattern = '\*ku\*'
 
+" Enable heavy features.
+" Use camel case completion.
+"let g:neocomplcache_enable_camel_case_completion = 1
+" Use underbar completion.
+"let g:neocomplcache_enable_underbar_completion = 1
+
+" Define dictionary.
+let g:neocomplcache_dictionary_filetype_lists = {
+    \ 'default' : '',
+        \ }
+
 " Define keyword.
 if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
+    let g:neocomplcache_keyword_patterns = {}
 endif
 let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplcache#undo_completion()
+inoremap <expr><C-l>     neocomplcache#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  " return neocomplcache#smart_close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  return pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+endfunction
+" <TAB>: completion.
+" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" inoremap <expr><S-TAB>  pumvisible() ? "\<C-p>" : "\<S-TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
+" inoremap <expr><C-y>  neocomplcache#close_popup()
+inoremap <expr><C-e>  neocomplcache#cancel_popup()
+inoremap <expr><CR>  pumvisible() ? neocomplcache#close_popup() : "\<CR>"
+
+" For cursor moving in insert mode(Not recommended)
+"inoremap <expr><Left>  neocomplcache#close_popup() . "\<Left>"
+"inoremap <expr><Right> neocomplcache#close_popup() . "\<Right>"
+"inoremap <expr><Up>    neocomplcache#close_popup() . "\<Up>"
+"inoremap <expr><Down>  neocomplcache#close_popup() . "\<Down>"
+" Or set this.
+"let g:neocomplcache_enable_cursor_hold_i = 1
+" Or set this.
+"let g:neocomplcache_enable_insert_char_pre = 1
 
 " AutoComplPop like behavior.
 let g:neocomplcache_enable_auto_select = 1
 
-" When you input 'ho-a',neocomplcache will select candidate 'a'.
-let g:neocomplcache_enable_quick_match = 1
-
-" Define dictionary.
-let g:neocomplcache_dictionary_filetype_lists = {
-           \ 'default' : '',
-           \ }
-
-if !exists('g:neocomplcache_same_filetype_lists')
-    let g:neocomplcache_same_filetype_lists = {}
-endif
-" In c buffers, completes from cpp and d buffers.
-let g:neocomplcache_same_filetype_lists.c = 'cpp,d'
-" In cpp buffers, completes from c buffers.
-let g:neocomplcache_same_filetype_lists.cpp = 'c'
-" In gitconfig buffers, completes from all buffers.
-let g:neocomplcache_same_filetype_lists.gitconfig = '_'
-" In default, completes from all buffers.
-let g:neocomplcache_same_filetype_lists._ = '_'
-
-" Define keyword.
-if !exists('g:neocomplcache_keyword_patterns')
-  let g:neocomplcache_keyword_patterns = {}
-endif
-let g:neocomplcache_keyword_patterns['default'] = '\h\w*'
-
-" Recommended key-mappings.
-" <CR>: close popup and save indent.
-inoremap <expr><C-e>  neocomplcache#smart_close_popup()
-" <TAB>: completion.
-" inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
-" <C-h>, <BS>: close popup and delete backword char.
-"inoremap <expr><C-h> neocomplcache#smart_close_popup()."\<C-h>"
-inoremap <expr><BS> neocomplcache#smart_close_popup()."\<C-h>"
-" inoremap <expr><SPACE>  pumvisible() ? neocomplcache#cancel_popup()."\<SPACE>" : "\<SPACE>"
-inoremap <expr><CR>  pumvisible() ? neocomplcache#close_popup() : "\<CR>"
 " Shell like behavior(not recommended).
 "set completeopt+=longest
 "let g:neocomplcache_enable_auto_select = 1
 "let g:neocomplcache_disable_auto_complete = 1
-"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<TAB>"
-"inoremap <expr><CR>  neocomplcache#smart_close_popup() . "\<CR>"
+"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
 
 " Enable omni completion.
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
@@ -665,27 +678,39 @@ autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 if !exists('g:neocomplcache_omni_patterns')
   let g:neocomplcache_omni_patterns = {}
 endif
-"let g:neocomplcache_omni_patterns.ruby = '[^. *\t]\.\w*\|\h\w*::'
-"autocmd FileType ruby setlocal omnifunc=rubycomplete#Complete
 let g:neocomplcache_omni_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
-let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+" let g:neocomplcache_omni_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
 let g:neocomplcache_omni_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
-"if has("autocmd")
-"    autocmd InsertEnter * NeoComplCacheCachingBuffer
-"    autocmd InsertLeave * NeoComplCacheCachingBuffer
+
+" For perlomni.vim setting.
+" https://github.com/c9s/perlomni.vim
+" let g:neocomplcache_omni_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+
+" SuperTab like snippets behavior.
+"imap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+"\ "\<Plug>(neosnippet_expand_or_jump)"
+"\: pumvisible() ? "\<C-n>" : "\<TAB>"
+"smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+"\ "\<Plug>(neosnippet_expand_or_jump)"
+"\: "\<TAB>"
+"
+"" For snippet_complete marker.
+"if has('conceal')
+"  set conceallevel=2 concealcursor=i
 "endif
 
 let g:neocomplcache_force_overwrite_completefunc=1
-let g:clang_complete_auto=0 "don't auto do clang_complete
+let g:clang_complete_auto=1 "don't auto do clang_complete
 
 let g:clang_hl_errors = 0
 if !filereadable(s:ProjectDir."/project-setting.vim") "工程配置文件的名字
     let g:clang_use_library = 1 "applications
 endif
-let g:clang_library_path = '/usr/local/lib'
+let g:clang_library_path = '/usr/lib/llvm'
+" let g:clang_library_path = '/usr/local/lib'
 let g:clang_complete_copen = 1 
-let g:clang_complete_macros = 1
-let g:clang_complete_patterns = 1
+let g:clang_complete_macros = 0
+let g:clang_complete_patterns = 0
 let g:clang_sort_algo = ''
 let g:clang_auto_select = 1
 let g:clang_auto_user_options = '.clang_complete'
@@ -715,6 +740,7 @@ let g:rainbow_active = 1
 "au Syntax * RainbowParenthesesLoadRound
 "au Syntax * RainbowParenthesesLoadSquare
 "au Syntax * RainbowParenthesesLoadBraces
-map <unique> <Leader>fa <Plug>AM_afnc
-map <unique> <Leader>dc <Plug>AM_adec
-map <unique> <Leader>df <Plug>AM_adef
+map <Leader>fa <Plug>AM_afnc
+map <Leader>dc <Plug>AM_adec
+map <Leader>df <Plug>AM_adef
+

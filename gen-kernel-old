@@ -1,0 +1,307 @@
+#!/bin/sh
+WORKPATH="."
+PATH_POS=-1
+FILELIST=""
+UPDATE=""
+INC=""
+COUNT=0
+
+for PARAM in "$@"
+do
+    if [ "$PARAM" = "list" ]
+    then
+        FILELIST=$PARAM
+    fi
+
+    if [ "$PARAM" = "path" ]
+    then
+        #echo $COUNT
+        PATH_POS=$COUNT
+        PATH_POS+=1
+    fi
+
+    if [ $COUNT = $PATH_POS ]
+    then
+        WORKPATH=$PARAM
+    fi
+
+    if [ "$PARAM" = "update" ]
+    then
+        UPDATE=$PARAM
+    fi
+
+    if [ "$PARAM" = "inc" ]
+    then
+        INC=$PARAM
+    fi
+
+    COUNT+=1
+done
+
+echo $WORKPATH
+#cd $WORKPATH
+
+
+if [ "$FILELIST" = "list" ]
+then
+    # generate cscope.file
+    echo "gen cscope.file..."
+    find -L $WORKPATH \
+        -path "$WORKPATH/arch/*" ! -path "$WORKPATH/arch/arm*" -prune -o \
+        -path "$WORKPATH/arch/arm/mach-*" ! -path "$WORKPATH/arch/arm/mach-omap2*" -prune -o \
+        -path "$WORKPATH/arch/arm/plat-*" ! -path "$WORKPATH/arch/arm/plat-omap*" -prune -o \
+        \
+        -path "$WORKPATH/tmp*" -prune -o \
+        -path "$WORKPATH/Documentation*" -prune -o \
+        -path "$WORKPATH/crypto*" -prune -o \
+        -path "$WORKPATH/firmware*" -prune -o \
+        -path "$WORKPATH/security*" -prune -o \
+        -path "$WORKPATH/scripts*" -prune -o \
+        \
+        -path "$WORKPATH/fs/9d*" -prune -o \
+        -path "$WORKPATH/fs/adfs*" -prune -o \
+        -path "$WORKPATH/fs/affs*" -prune -o \
+        -path "$WORKPATH/fs/afs*" -prune -o \
+        -path "$WORKPATH/fs/autofs4*" -prune -o \
+        -path "$WORKPATH/fs/befs*" -prune -o \
+        -path "$WORKPATH/fs/bfs*" -prune -o \
+        -path "$WORKPATH/fs/btrfs*" -prune -o \
+        -path "$WORKPATH/fs/cifs*" -prune -o \
+        -path "$WORKPATH/fs/cachefiles*" -prune -o \
+        -path "$WORKPATH/fs/ceph*" -prune -o \
+        -path "$WORKPATH/fs/coda*" -prune -o \
+        -path "$WORKPATH/fs/configfs*" -prune -o \
+        -path "$WORKPATH/fs/cramfs*" -prune -o \
+        -path "$WORKPATH/fs/dlm*" -prune -o \
+        -path "$WORKPATH/fs/ecryptfs*" -prune -o \
+        -path "$WORKPATH/fs/efs*" -prune -o \
+        -path "$WORKPATH/fs/exofs*" -prune -o \
+        -path "$WORKPATH/fs/exportfs*" -prune -o \
+        -path "$WORKPATH/fs/ext*" -prune -o \
+        -path "$WORKPATH/fs/fat*" -prune -o \
+        -path "$WORKPATH/fs/freevxfs*" -prune -o \
+        -path "$WORKPATH/fs/fuse*" -prune -o \
+        -path "$WORKPATH/fs/gfs2*" -prune -o \
+        -path "$WORKPATH/fs/hf*" -prune -o \
+        -path "$WORKPATH/fs/hostfs*" -prune -o \
+        -path "$WORKPATH/fs/hp*" -prune -o \
+        -path "$WORKPATH/fs/hugetlbfs*" -prune -o \
+        -path "$WORKPATH/fs/isofs*" -prune -o \
+        -path "$WORKPATH/fs/jbd*" -prune -o \
+        -path "$WORKPATH/fs/jfs*" -prune -o \
+        -path "$WORKPATH/fs/minix*" -prune -o \
+        -path "$WORKPATH/fs/ncpfs*" -prune -o \
+        -path "$WORKPATH/fs/xfs*" -prune -o \
+        -path "$WORKPATH/fs/udf*" -prune -o \
+        -path "$WORKPATH/fs/ufs*" -prune -o \
+        -path "$WORKPATH/fs/ntfs*" -prune -o \
+        -path "$WORKPATH/fs/squashfs*" -prune -o \
+        -path "$WORKPATH/fs/romfs*" -prune -o \
+        -path "$WORKPATH/fs/reiserfs*" -prune -o \
+        -path "$WORKPATH/fs/quota*" -prune -o \
+        -path "$WORKPATH/fs/nilfs2*" -prune -o \
+        -path "$WORKPATH/fs/ocfs2*" -prune -o \
+        -path "$WORKPATH/fs/partitions*" -prune -o \
+        -path "$WORKPATH/fs/sysv*" -prune -o \
+        \
+        -path "$WORKPATH/net/*" \
+        ! -path "$WORKPATH/net/core*"  \
+        ! -path "$WORKPATH/net/ipv4*"  \
+        ! -path "$WORKPATH/net/ipv6*"  \
+        ! -path "$WORKPATH/net/unix*"  \
+        ! -path "$WORKPATH/net/netlink*"  \
+        ! -path "$WORKPATH/net/packet*"  \
+        ! -path "$WORKPATH/net/ethernet*"  \
+        ! -path "$WORKPATH/net/compat.c"  \
+        ! -path "$WORKPATH/net/nonet.c"  \
+        ! -path "$WORKPATH/net/sysctl_net.c" -prune -o \
+        \
+        -path "$WORKPATH/drivers/*" \
+        ! -path "$WORKPATH/drivers/net*" \
+        ! -path "$WORKPATH/drivers/char*" \
+        ! -path "$WORKPATH/drivers/mtd*" \
+        ! -path "$WORKPATH/drivers/usb*" \
+        ! -path "$WORKPATH/drivers/serial*" \
+        ! -path "$WORKPATH/drivers/watchdog*" \
+        ! -path "$WORKPATH/drivers/misc*"  \
+        ! -path "$WORKPATH/drivers/pci*"  \
+        ! -path "$WORKPATH/drivers/video*"  \
+        ! -path "$WORKPATH/drivers/mmc*"  \
+        ! -path "$WORKPATH/drivers/base*"  \
+        ! -path "$WORKPATH/drivers/gpio*"  \
+        ! -path "$WORKPATH/drivers/rtc*"  \
+        ! -path "$WORKPATH/drivers/spi*"  \
+        ! -path "$WORKPATH/drivers/tty*"  \
+        ! -path "$WORKPATH/drivers/of*"  \
+        ! -path "$WORKPATH/drivers/dsp*"  \
+        ! -path "$WORKPATH/drivers/mcu_drivers*"  \
+        ! -path "$WORKPATH/drivers/i2c*" -prune -o \
+        \
+        -path "$WORKPATH/drivers/net/*" \
+        ! -path "$WORKPATH/drivers/net/loopback*" \
+        ! -path "$WORKPATH/drivers/net/phy*" \
+        ! -path "$WORKPATH/drivers/net/davinci_emac*" \
+        ! -path "$WORKPATH/drivers/net/Space*" -prune -o \
+        \
+        -path "$WORKPATH/drivers/char/*" \
+        ! -path "$WORKPATH/drivers/char/misc*" \
+        ! -path "$WORKPATH/drivers/char/random*" \
+        ! -path "$WORKPATH/drivers/char/ti81*" \
+        ! -path "$WORKPATH/drivers/char/mem*" -prune -o \
+        \
+        -path "$WORKPATH/sound/*" \
+        ! -path "$WORKPATH/sound/soc*" \
+        ! -path "$WORKPATH/sound/core*" \
+        ! -path "$WORKPATH/sound_core*"  -prune -o \
+        \
+        -path "$WORKPATH/sound/soc/*" \
+        ! -path "$WORKPATH/sound/soc/codecs*" \
+        ! -path "$WORKPATH/sound/soc/davinci*" -prune -o \
+        \
+        -path "$WORKPATH/sound/soc/codecs/*" \
+        ! -path "$WORKPATH/sound/soc/codecs/tlv320aic3x*"  -prune -o \
+        \
+        -name "*.mod.c" -prune -o \
+        \( -name '*.[chxsSCH]' -o -name '*.inc' -o -name '*.INC' \) -print | sort -f > $WORKPATH/cscope.files
+        
+    #awk '{print "\014\012" $0 ",0" }' cscope.files > TAGS
+
+    # generate vimprojects for indexer
+    #echo "tags=$PWD CD=. filter="*.c *.h" {" > vimprojects
+    #cat cscope.files >> vimprojects
+    #echo "}" >> vimprojects
+
+    # generate tag file for lookupfile plugin
+    echo "gen lookupfile..."
+    echo -e "!_TAG_FILE_SORTED\t2\t/2=foldcase/" > filenametags
+    find -L $WORKPATH \
+        -path "$WORKPATH/arch/*" ! -path "$WORKPATH/arch/arm*" -prune -o \
+        -path "$WORKPATH/arch/arm/mach-*" ! -path "$WORKPATH/arch/arm/mach-omap2*" -prune -o \
+        -path "$WORKPATH/arch/arm/plat-*" ! -path "$WORKPATH/arch/arm/plat-omap*" -prune -o \
+        \
+        -path "$WORKPATH/tmp*" -prune -o \
+        -path "$WORKPATH/Documentation*" -prune -o \
+        -path "$WORKPATH/crypto*" -prune -o \
+        -path "$WORKPATH/firmware*" -prune -o \
+        -path "$WORKPATH/security*" -prune -o \
+        -path "$WORKPATH/scripts*" -prune -o \
+        \
+        -path "$WORKPATH/fs/9d*" -prune -o \
+        -path "$WORKPATH/fs/adfs*" -prune -o \
+        -path "$WORKPATH/fs/affs*" -prune -o \
+        -path "$WORKPATH/fs/afs*" -prune -o \
+        -path "$WORKPATH/fs/autofs4*" -prune -o \
+        -path "$WORKPATH/fs/befs*" -prune -o \
+        -path "$WORKPATH/fs/bfs*" -prune -o \
+        -path "$WORKPATH/fs/btrfs*" -prune -o \
+        -path "$WORKPATH/fs/cifs*" -prune -o \
+        -path "$WORKPATH/fs/cachefiles*" -prune -o \
+        -path "$WORKPATH/fs/ceph*" -prune -o \
+        -path "$WORKPATH/fs/coda*" -prune -o \
+        -path "$WORKPATH/fs/configfs*" -prune -o \
+        -path "$WORKPATH/fs/cramfs*" -prune -o \
+        -path "$WORKPATH/fs/dlm*" -prune -o \
+        -path "$WORKPATH/fs/ecryptfs*" -prune -o \
+        -path "$WORKPATH/fs/efs*" -prune -o \
+        -path "$WORKPATH/fs/exofs*" -prune -o \
+        -path "$WORKPATH/fs/exportfs*" -prune -o \
+        -path "$WORKPATH/fs/ext*" -prune -o \
+        -path "$WORKPATH/fs/fat*" -prune -o \
+        -path "$WORKPATH/fs/freevxfs*" -prune -o \
+        -path "$WORKPATH/fs/fuse*" -prune -o \
+        -path "$WORKPATH/fs/gfs2*" -prune -o \
+        -path "$WORKPATH/fs/hf*" -prune -o \
+        -path "$WORKPATH/fs/hostfs*" -prune -o \
+        -path "$WORKPATH/fs/hp*" -prune -o \
+        -path "$WORKPATH/fs/hugetlbfs*" -prune -o \
+        -path "$WORKPATH/fs/isofs*" -prune -o \
+        -path "$WORKPATH/fs/jbd*" -prune -o \
+        -path "$WORKPATH/fs/jfs*" -prune -o \
+        -path "$WORKPATH/fs/minix*" -prune -o \
+        -path "$WORKPATH/fs/ncpfs*" -prune -o \
+        -path "$WORKPATH/fs/xfs*" -prune -o \
+        -path "$WORKPATH/fs/udf*" -prune -o \
+        -path "$WORKPATH/fs/ufs*" -prune -o \
+        -path "$WORKPATH/fs/ntfs*" -prune -o \
+        -path "$WORKPATH/fs/squashfs*" -prune -o \
+        -path "$WORKPATH/fs/romfs*" -prune -o \
+        -path "$WORKPATH/fs/reiserfs*" -prune -o \
+        -path "$WORKPATH/fs/quota*" -prune -o \
+        -path "$WORKPATH/fs/nilfs2*" -prune -o \
+        -path "$WORKPATH/fs/ocfs2*" -prune -o \
+        -path "$WORKPATH/fs/partitions*" -prune -o \
+        -path "$WORKPATH/fs/sysv*" -prune -o \
+        \
+        -path "$WORKPATH/net/*" \
+        ! -path "$WORKPATH/net/core*"  \
+        ! -path "$WORKPATH/net/ipv4*"  \
+        ! -path "$WORKPATH/net/ipv6*"  \
+        ! -path "$WORKPATH/net/unix*"  \
+        ! -path "$WORKPATH/net/netlink*"  \
+        ! -path "$WORKPATH/net/packet*"  \
+        ! -path "$WORKPATH/net/ethernet*"  \
+        ! -path "$WORKPATH/net/compat.c"  \
+        ! -path "$WORKPATH/net/nonet.c"  \
+        ! -path "$WORKPATH/net/sysctl_net.c" -prune -o \
+        \
+        -path "$WORKPATH/drivers/*" \
+        ! -path "$WORKPATH/drivers/net*" \
+        ! -path "$WORKPATH/drivers/char*" \
+        ! -path "$WORKPATH/drivers/mtd*" \
+        ! -path "$WORKPATH/drivers/usb*" \
+        ! -path "$WORKPATH/drivers/serial*" \
+        ! -path "$WORKPATH/drivers/watchdog*" \
+        ! -path "$WORKPATH/drivers/misc*"  \
+        ! -path "$WORKPATH/drivers/pci*"  \
+        ! -path "$WORKPATH/drivers/video*"  \
+        ! -path "$WORKPATH/drivers/mmc*"  \
+        ! -path "$WORKPATH/drivers/base*"  \
+        ! -path "$WORKPATH/drivers/gpio*"  \
+        ! -path "$WORKPATH/drivers/rtc*"  \
+        ! -path "$WORKPATH/drivers/spi*"  \
+        ! -path "$WORKPATH/drivers/tty*"  \
+        ! -path "$WORKPATH/drivers/of*"  \
+        ! -path "$WORKPATH/drivers/dsp*"  \
+        ! -path "$WORKPATH/drivers/mcu_drivers*"  \
+        ! -path "$WORKPATH/drivers/i2c*" -prune -o \
+        \
+        -path "$WORKPATH/drivers/net/*" \
+        ! -path "$WORKPATH/drivers/net/loopback*" \
+        ! -path "$WORKPATH/drivers/net/phy*" \
+        ! -path "$WORKPATH/drivers/net/davinci_emac*" \
+        ! -path "$WORKPATH/drivers/net/Space*" -prune -o \
+        \
+        -path "$WORKPATH/drivers/char/*" \
+        ! -path "$WORKPATH/drivers/char/misc*" \
+        ! -path "$WORKPATH/drivers/char/random*" \
+        ! -path "$WORKPATH/drivers/char/ti81*" \
+        ! -path "$WORKPATH/drivers/char/mem*" -prune -o \
+        \
+        -path "$WORKPATH/sound/*" \
+        ! -path "$WORKPATH/sound/soc*" \
+        ! -path "$WORKPATH/sound/core*" \
+        ! -path "$WORKPATH/sound_core*"  -prune -o \
+        \
+        -path "$WORKPATH/sound/soc/*" \
+        ! -path "$WORKPATH/sound/soc/codecs*" \
+        ! -path "$WORKPATH/sound/soc/davinci*" -prune -o \
+        \
+        -path "$WORKPATH/sound/soc/codecs/*" \
+        ! -path "$WORKPATH/sound/soc/codecs/tlv320aic3x*"  -prune -o \
+        \
+        -name "*.mod.c" -prune -o \
+        -name "*.[chxsSCH]" -type f -printf "%f\t%p\t1\n" | \
+        sort -f >> $WORKPATH/filenametags
+fi
+
+if [ "$UPDATE" = "update" ]
+then
+    #echo "gen ctags..."
+    #ctags --c++-kinds=+p --fields=+iaSn --extra=+q -L cscope.files -f tags
+
+    echo "gen cscope..."
+    #cscope -bkq
+    gtags --gtagsconf ~/gtags.conf -f cscope.files -i
+
+fi
+
